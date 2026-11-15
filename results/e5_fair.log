@@ -1,0 +1,12 @@
+3spin n=24 s0 N0= 10 | native hits  15528 max/min     1.9 unseen  0 H/logN0 0.993 p=5.9e-113 | quad hits   2874 max/min     7.8 unseen  0 H/logN0 0.916 p=7.0e-253
+3spin n=24 s8 N0=  9 | native hits  15297 max/min     1.5 unseen  0 H/logN0 0.996 p=1.4e-58 | quad hits   2562 max/min     2.9 unseen  0 H/logN0 0.974 p=8.9e-60
+3spin n=24 s10 N0=  5 | native hits  13519 max/min     1.2 unseen  0 H/logN0 0.998 p=3.8e-15 | quad hits    969 max/min     5.8 unseen  0 H/logN0 0.884 p=2.0e-83
+3spin n=24 s17 N0= 17 | native hits  16070 max/min     2.4 unseen  0 H/logN0 0.986 p=8.9e-272 | quad hits   2216 max/min     6.0 unseen  0 H/logN0 0.927 p=6.6e-228
+3spin n=32 s2 N0=  8 | native hits  10546 max/min     3.9 unseen  0 H/logN0 0.930 p=0.0e+00 | quad hits    378 max/min    12.0 unseen  0 H/logN0 0.795 p=8.9e-86
+3spin n=32 s8 N0=  9 | native hits  10503 max/min     2.3 unseen  0 H/logN0 0.983 p=3.0e-192 | quad hits    443 max/min    19.3 unseen  0 H/logN0 0.827 p=1.4e-57
+3spin n=32 s9 N0= 21 | native hits  13117 max/min     5.3 unseen  0 H/logN0 0.961 p=0.0e+00 | quad hits    406 max/min     6.6 unseen  0 H/logN0 0.958 p=1.2e-16
+3spin n=32 s17 N0=  6 | native hits   8237 max/min     1.7 unseen  0 H/logN0 0.988 p=1.4e-75 | quad hits    418 max/min     6.8 unseen  0 H/logN0 0.935 p=1.6e-17
+3spin n=40 s2 N0= 10 | native hits   4677 max/min     3.3 unseen  0 H/logN0 0.959 p=3.7e-216 | quad hits     44 max/min    15.0 unseen  1 H/logN0 0.822 p=nan
+3spin n=40 s5 N0=  4 | native hits   2450 max/min     1.2 unseen  0 H/logN0 0.999 p=2.6e-02 | quad hits     48 max/min     1.2 unseen  0 H/logN0 0.997 p=9.5e-01
+3spin n=40 s7 N0= 11 | native hits   5476 max/min     3.5 unseen  0 H/logN0 0.971 p=5.9e-199 | quad hits     46 max/min     9.0 unseen  0 H/logN0 0.895 p=nan
+3spin n=40 s10 N0=  8 | native hits   6596 max/min     3.7 unseen  0 H/logN0 0.952 p=0.0e+00 | quad hits     82 max/min     7.0 unseen  0 H/logN0 0.930 p=8.5e-04

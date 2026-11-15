@@ -1,0 +1,42 @@
+3R3X         20 s0 n=  20 | minfill w=  9 c=  12.0 | greedy w=  8.0 c=  11.6 | hyper w=  8.0 c=  11.6 (10s) | E0=-20 #=4 0.0s
+3R3X         20 s1 n=  20 | minfill w=  8 c=  11.3 | greedy w=  6.0 c=  10.8 | hyper w=  6.0 c=  10.8 (9s) | E0=-20 #=2 0.0s
+3R3X         20 s2 n=  20 | minfill w=  7 c=  10.8 | greedy w=  6.0 c=  10.5 | hyper w=  6.0 c=  10.5 (8s) | E0=-20 #=2 0.0s
+3R3X         40 s0 n=  40 | minfill w= 15 c=  18.2 | greedy w= 13.0 c=  16.9 | hyper w= 13.0 c=  16.8 (30s) | E0=-40 #=2 0.0s
+3R3X         40 s1 n=  40 | minfill w= 13 c=  16.9 | greedy w= 12.0 c=  16.4 | hyper w= 12.0 c=  16.4 (30s) | E0=-40 #=2 0.0s
+3R3X         40 s2 n=  40 | minfill w= 16 c=  18.5 | greedy w= 13.0 c=  16.7 | hyper w= 13.0 c=  16.7 (30s) | E0=-40 #=2 0.0s
+3R3X         60 s0 n=  60 | minfill w= 21 c=  23.2 | greedy w= 16.0 c=  20.9 | hyper w= 16.0 c=  20.7 (30s) | E0=-60 #=1 0.1s
+3R3X         60 s1 n=  60 | minfill w= 18 c=  21.2 | greedy w= 14.0 c=  18.7 | hyper w= 14.0 c=  18.6 (30s) | E0=-60 #=1 0.0s
+3R3X         60 s2 n=  60 | minfill w= 22 c=  24.6 | greedy w= 19.0 c=  22.9 | hyper w= 18.0 c=  22.5 (30s) | E0=-60 #=2 0.2s
+3R3X         80 s0 n=  80 | minfill w= 31 c=  33.1 | greedy w= 24.0 c=  29.3 | hyper w= 22.0 c=  27.2 (30s) | E0=-80 #=1 5.9s
+3R3X         80 s1 n=  80 | minfill w= 29 c=  31.3 | greedy w= 22.0 c=  27.5 | hyper w= 23.0 c=  27.1 (30s) | E0=-80 #=2 3.1s
+3R3X         80 s2 n=  80 | minfill w= 25 c=  28.2 | greedy w= 20.0 c=  25.0 | hyper w= 20.0 c=  24.9 (30s) | E0=-80 #=2 0.8s
+3R3X        100 s0 n= 100 | minfill w= 34 c=  37.0 | greedy w= 28.0 c=  32.7 | hyper w= 26.0 c=  30.9 (30s)
+3R3X        100 s1 n= 100 | minfill w= 34 c=  36.3 | greedy w= 27.0 c=  31.4 | hyper w= 25.0 c=  30.6 (30s)
+3R3X        100 s2 n= 100 | minfill w= 35 c=  37.3 | greedy w= 29.0 c=  34.0 | hyper w= 27.0 c=  32.5 (30s)
+3R3X        150 s0 n= 150 | minfill w= 53 c=  55.0 | greedy w= 39.0 c=  44.8 | hyper w= 40.0 c=  45.0 (31s)
+3R3X        150 s1 n= 150 | minfill w= 58 c=  60.0 | greedy w= 43.0 c=  48.2 | hyper w= 40.0 c=  46.4 (30s)
+3R3X        150 s2 n= 150 | minfill w= 56 c=  58.0 | greedy w= 43.0 c=  48.1 | hyper w= 41.0 c=  46.7 (30s)
+3R3X        200 s0 n= 200 | minfill w= 74 c=  77.0 | greedy w= 58.0 c=  63.2 | hyper w= 52.0 c=  57.8 (32s)
+3R3X        200 s1 n= 200 | minfill w= 79 c=  81.0 | greedy w= 58.0 c=  63.3 | hyper w= 53.0 c=  58.3 (31s)
+3R3X        200 s2 n= 200 | minfill w= 72 c=  75.0 | greedy w= 55.0 c=  60.7 | hyper w= 53.0 c=  58.4 (32s)
+3spin_m2n    20 s0 n=  20 | minfill w= 11 c=  13.5 | greedy w= 10.0 c=  13.6 | hyper w= 10.0 c=  13.5 (30s) | E0=-30 #=1 0.0s
+3spin_m2n    20 s1 n=  20 | minfill w= 11 c=  14.1 | greedy w= 11.0 c=  14.2 | hyper w= 11.0 c=  14.2 (30s) | E0=-26 #=12 0.0s
+3spin_m2n    20 s2 n=  20 | minfill w= 10 c=  13.2 | greedy w= 10.0 c=  13.5 | hyper w= 10.0 c=  13.0 (30s) | E0=-28 #=2 0.0s
+3spin_m2n    30 s0 n=  30 | minfill w= 16 c=  19.0 | greedy w= 15.0 c=  18.6 | hyper w= 15.0 c=  18.3 (31s) | E0=-42 #=9 0.0s
+3spin_m2n    30 s1 n=  30 | minfill w= 15 c=  18.0 | greedy w= 14.0 c=  17.9 | hyper w= 15.0 c=  17.8 (30s) | E0=-44 #=2 0.0s
+3spin_m2n    30 s2 n=  30 | minfill w= 14 c=  16.8 | greedy w= 13.0 c=  17.0 | hyper w= 12.0 c=  16.4 (30s) | E0=-44 #=4 0.0s
+3spin_m2n    40 s0 n=  40 | minfill w= 20 c=  22.9 | greedy w= 20.0 c=  23.7 | hyper w= 20.0 c=  22.7 (30s) | E0=-60 #=1 0.3s
+3spin_m2n    40 s1 n=  40 | minfill w= 20 c=  22.7 | greedy w= 19.0 c=  23.0 | hyper w= 19.0 c=  22.1 (30s) | E0=-58 #=2 0.3s
+3spin_m2n    40 s2 n=  40 | minfill w= 19 c=  21.5 | greedy w= 19.0 c=  22.2 | hyper w= 19.0 c=  22.1 (30s) | E0=-56 #=10 0.2s
+3spin_m2n    50 s0 n=  50 | minfill w= 25 c=  27.7 | greedy w= 25.0 c=  29.0 | hyper w= 23.0 c=  26.7 (30s) | E0=-74 #=2 2.9s
+3spin_m2n    50 s1 n=  50 | minfill w= 24 c=  27.4 | greedy w= 25.0 c=  29.1 | hyper w= 23.0 c=  26.9 (30s) | E0=-74 #=9 7.9s
+3spin_m2n    50 s2 n=  50 | minfill w= 21 c=  23.9 | greedy w= 22.0 c=  26.5 | hyper w= 21.0 c=  24.6 (31s) | E0=-70 #=101 1.6s
+3spin_m2n    60 s0 n=  60 | minfill w= 28 c=  30.5 | greedy w= 28.0 c=  32.7 | hyper w= 27.0 c=  31.5 (31s)
+3spin_m2n    60 s1 n=  60 | minfill w= 31 c=  33.3 | greedy w= 30.0 c=  33.4 | hyper w= 30.0 c=  33.1 (31s)
+3spin_m2n    60 s2 n=  60 | minfill w= 27 c=  30.5 | greedy w= 29.0 c=  33.4 | hyper w= 27.0 c=  31.5 (32s)
+3spin_m2n    80 s0 n=  80 | minfill w= 38 c=  40.8 | greedy w= 40.0 c=  44.2 | hyper w= 35.0 c=  39.6 (32s)
+3spin_m2n    80 s1 n=  80 | minfill w= 37 c=  39.6 | greedy w= 39.0 c=  43.4 | hyper w= 38.0 c=  42.4 (33s)
+3spin_m2n    80 s2 n=  80 | minfill w= 36 c=  39.7 | greedy w= 38.0 c=  42.0 | hyper w= 41.0 c=  45.9 (35s)
+3spin_m2n   100 s0 n= 100 | minfill w= 41 c=  44.5 | greedy w= 48.0 c=  52.6 | hyper w= 51.0 c=  55.5 (31s)
+3spin_m2n   100 s1 n= 100 | minfill w= 47 c=  49.8 | greedy w= 48.0 c=  52.9 | hyper w= 45.0 c=  50.2 (32s)
+3spin_m2n   100 s2 n= 100 | minfill w= 49 c=  52.1 | greedy w= 48.0 c=  53.7 | hyper w= 51.0 c=  55.3 (35s)

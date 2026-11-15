@@ -1,0 +1,9 @@
+numpy
+scipy
+torch
+cotengra
+kahypar
+optuna
+cmaes
+matplotlib
+quimb  # only for exp/e10_compressed.py

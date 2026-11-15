@@ -1,0 +1,36 @@
+plaq2d        4 s0 n=  16 | minfill w=  9 c=  12.5 | greedy w=  8.0 c=  12.2 | hyper w=  8.0 c=  12.2 (11s) | E0=-12 #=256 0.0s
+plaq2d        4 s1 n=  16 | minfill w=  9 c=  12.5 | greedy w=  8.0 c=  12.2 | hyper w=  8.0 c=  12.2 (10s) | E0=-10 #=1280 0.0s
+plaq2d        4 s2 n=  16 | minfill w=  9 c=  12.5 | greedy w=  8.0 c=  12.2 | hyper w=  8.0 c=  12.2 (10s) | E0=-10 #=1280 0.0s
+plaq2d        6 s0 n=  36 | minfill w= 17 c=  19.3 | greedy w= 12.0 c=  17.7 | hyper w= 12.0 c=  17.7 (27s) | E0=-30 #=32768 0.0s
+plaq2d        6 s1 n=  36 | minfill w= 17 c=  19.3 | greedy w= 12.0 c=  17.7 | hyper w= 12.0 c=  17.7 (30s) | E0=-28 #=49152 0.0s
+plaq2d        6 s2 n=  36 | minfill w= 17 c=  19.3 | greedy w= 12.0 c=  17.7 | hyper w= 12.0 c=  17.7 (27s) | E0=-30 #=12288 0.0s
+plaq2d        8 s0 n=  64 | minfill w= 23 c=  26.0 | greedy w= 18.0 c=  23.1 | hyper w= 18.0 c=  23.0 (30s) | E0=-54 #=11796480 0.2s
+plaq2d        8 s1 n=  64 | minfill w= 23 c=  26.0 | greedy w= 16.0 c=  23.3 | hyper w= 18.0 c=  23.1 (30s) | E0=-56 #=2621440 0.2s
+plaq2d        8 s2 n=  64 | minfill w= 23 c=  26.0 | greedy w= 18.0 c=  23.2 | hyper w= 18.0 c=  23.1 (30s) | E0=-54 #=11796480 0.2s
+plaq2d       10 s0 n= 100 | minfill w= 29 c=  31.6 | greedy w= 22.0 c=  28.2 | hyper w= 22.0 c=  28.0 (30s) | E0=-92 #=54525952 7.8s
+plaq2d       10 s1 n= 100 | minfill w= 29 c=  31.6 | greedy w= 22.0 c=  28.4 | hyper w= 22.0 c=  28.1 (30s) | E0=-92 #=12582912 6.6s
+plaq2d       10 s2 n= 100 | minfill w= 29 c=  31.6 | greedy w= 22.0 c=  28.4 | hyper w= 22.0 c=  28.0 (30s) | E0=-86 #=8808038400 4.8s
+plaq2d       12 s0 n= 144 | minfill w= 35 c=  37.1 | greedy w= 28.0 c=  34.6 | hyper w= 26.0 c=  33.2 (30s)
+plaq2d       12 s1 n= 144 | minfill w= 35 c=  37.1 | greedy w= 28.0 c=  35.0 | hyper w= 26.0 c=  33.2 (30s)
+plaq2d       12 s2 n= 144 | minfill w= 35 c=  37.1 | greedy w= 28.0 c=  34.5 | hyper w= 26.0 c=  33.1 (31s)
+plaq2d       16 s0 n= 256 | minfill w= 47 c=  50.0 | greedy w= 40.0 c=  46.9 | hyper w= 38.0 c=  46.4 (32s)
+plaq2d       16 s1 n= 256 | minfill w= 47 c=  50.0 | greedy w= 42.0 c=  47.6 | hyper w= 36.0 c=  46.2 (30s)
+plaq2d       16 s2 n= 256 | minfill w= 47 c=  50.0 | greedy w= 38.0 c=  46.6 | hyper w= 36.0 c=  43.6 (31s)
+tri2d         4 s0 n=  16 | minfill w=  9 c=  12.0 | greedy w=  8.0 c=  11.6 | hyper w=  8.0 c=  11.6 (10s) | E0=-16 #=1 0.0s
+tri2d         4 s1 n=  16 | minfill w=  9 c=  12.0 | greedy w=  8.0 c=  11.6 | hyper w=  8.0 c=  11.6 (10s) | E0=-16 #=1 0.0s
+tri2d         4 s2 n=  16 | minfill w=  9 c=  12.0 | greedy w=  8.0 c=  11.6 | hyper w=  8.0 c=  11.6 (9s) | E0=-16 #=1 0.0s
+tri2d         6 s0 n=  36 | minfill w= 17 c=  19.6 | greedy w= 12.0 c=  16.8 | hyper w= 12.0 c=  16.7 (27s) | E0=-34 #=48 0.0s
+tri2d         6 s1 n=  36 | minfill w= 17 c=  19.6 | greedy w= 12.0 c=  16.7 | hyper w= 12.0 c=  16.7 (26s) | E0=-32 #=864 0.0s
+tri2d         6 s2 n=  36 | minfill w= 17 c=  19.6 | greedy w= 13.0 c=  17.2 | hyper w= 12.0 c=  16.7 (26s) | E0=-36 #=16 0.0s
+tri2d         8 s0 n=  64 | minfill w= 21 c=  24.1 | greedy w= 17.0 c=  22.5 | hyper w= 18.0 c=  22.3 (30s) | E0=-64 #=1 0.1s
+tri2d         8 s1 n=  64 | minfill w= 21 c=  24.1 | greedy w= 17.0 c=  22.7 | hyper w= 18.0 c=  22.3 (30s) | E0=-64 #=1 0.1s
+tri2d         8 s2 n=  64 | minfill w= 21 c=  24.1 | greedy w= 18.0 c=  22.3 | hyper w= 18.0 c=  22.4 (30s) | E0=-64 #=1 0.1s
+tri2d        10 s0 n= 100 | minfill w= 29 c=  31.2 | greedy w= 23.0 c=  28.4 | hyper w= 21.0 c=  27.5 (30s) | E0=-100 #=1 6.7s
+tri2d        10 s1 n= 100 | minfill w= 29 c=  31.2 | greedy w= 23.0 c=  28.4 | hyper w= 21.0 c=  27.4 (30s) | E0=-100 #=1 4.9s
+tri2d        10 s2 n= 100 | minfill w= 29 c=  31.2 | greedy w= 22.0 c=  28.1 | hyper w= 21.0 c=  27.4 (31s) | E0=-100 #=1 7.5s
+tri2d        12 s0 n= 144 | minfill w= 37 c=  39.6 | greedy w= 28.0 c=  33.4 | hyper w= 25.0 c=  32.8 (30s)
+tri2d        12 s1 n= 144 | minfill w= 37 c=  39.6 | greedy w= 28.0 c=  34.0 | hyper w= 27.0 c=  32.8 (31s)
+tri2d        12 s2 n= 144 | minfill w= 37 c=  39.6 | greedy w= 27.0 c=  32.8 | hyper w= 25.0 c=  32.1 (30s)
+tri2d        16 s0 n= 256 | minfill w= 45 c=  48.0 | greedy w= 39.0 c=  44.3 | hyper w= 37.0 c=  44.5 (32s)
+tri2d        16 s1 n= 256 | minfill w= 45 c=  48.0 | greedy w= 40.0 c=  45.8 | hyper w= 36.0 c=  42.6 (31s)
+tri2d        16 s2 n= 256 | minfill w= 45 c=  48.0 | greedy w= 40.0 c=  45.4 | hyper w= 38.0 c=  45.4 (32s)

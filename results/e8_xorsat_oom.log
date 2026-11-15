@@ -1,0 +1,9 @@
+3R3X 150 s0: tree width 27 log2cost 44.8 slices 4096 (637s)
+Traceback (most recent call last):
+  File "exp/e8_gpu.py", line 34, in <module>
+    E, C, sec = ground_torch(tn, "cuda", torch.float32, counting=True, chunk_elems=1 << 26)
+  File "exp/../tn_torch.py", line 120, in ground_torch
+    vals.append(contract_torch(tn, device, dtype, counting, fix=fix, **kw))
+  File "exp/../tn_torch.py", line 101, in contract_torch
+    RC = torch.where(R == newR, RC, 0.0) + torch.where(m == newR, c, 0.0)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1024.00 MiB. GPU 0 has a total capacity of 31.73 GiB of which 21.87 GiB is free. Including non-PyTorch memory, this process has 9.86 GiB memory in use. 9.52 GiB allowed; Of the allocated memory 9.13 GiB is allocated by PyTorch, and 385.90 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

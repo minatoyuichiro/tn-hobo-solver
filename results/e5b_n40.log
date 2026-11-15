@@ -1,0 +1,4 @@
+n=40 s2 N0=10 | native hits 4706 H 0.958 | quad hits 653 H 0.864 max/min 19.9 chi2 p 2.2e-115 | p(native<=quad) 0.000
+n=40 s5 N0=4 | native hits 2525 H 0.998 | quad hits 721 H 1.000 max/min 1.1 chi2 p 8.6e-01 | p(native<=quad) 0.972
+n=40 s7 N0=11 | native hits 5472 H 0.966 | quad hits 817 H 0.871 max/min 18.0 chi2 p 2.5e-94 | p(native<=quad) 0.000
+n=40 s10 N0=8 | native hits 6548 H 0.948 | quad hits 1248 H 0.904 max/min 8.2 chi2 p 1.4e-105 | p(native<=quad) 0.000

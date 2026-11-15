@@ -1,0 +1,6 @@
+plaq2d L=12 s0: UB(SA) -136 -> E0 -136 (known -136) | slices 16 contracted 16 (100.0%) | width 22 | t tree 60s dual 0s bound 0s contract 62s
+plaq2d L=12 s0: UB(SA) -136 -> E0 -136 (known -136) | slices 1024 contracted 1024 (100.0%) | width 18 | t tree 60s dual 0s bound 22s contract 138s
+tri2d L=12 s0: UB(SA) -140 -> E0 -140 (known -140) | slices 32 contracted 32 (100.0%) | width 22 | t tree 61s dual 0s bound 1s contract 39s
+tri2d L=12 s0: UB(SA) -140 -> E0 -140 (known -140) | slices 256 contracted 256 (100.0%) | width 18 | t tree 61s dual 0s bound 6s contract 35s
+plaq2d L=12 s1: UB(SA) -130 -> E0 -130 (known -130) | slices 16 contracted 16 (100.0%) | width 22 | t tree 61s dual 0s bound 0s contract 69s
+plaq2d L=12 s1: UB(SA) -130 -> E0 -130 (known -130) | slices 256 contracted 256 (100.0%) | width 18 | t tree 62s dual 0s bound 7s contract 24s

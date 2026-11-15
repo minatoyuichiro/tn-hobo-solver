@@ -1,0 +1,28 @@
+3SAT_4.26    20 s0 n=  20 | minfill w= 14 c=  16.8 | greedy w= 14.0 c=  17.0 | hyper w= 13.0 c=  17.0 (31s) | E0=+1 #=55 0.0s
+3SAT_4.26    20 s1 n=  20 | minfill w= 15 c=  17.3 | greedy w= 14.0 c=  17.3 | hyper w= 14.0 c=  17.2 (31s) | E0=+1 #=41 0.0s
+3SAT_4.26    20 s2 n=  20 | minfill w= 13 c=  16.0 | greedy w= 13.0 c=  16.3 | hyper w= 13.0 c=  16.1 (31s) | E0=+0 #=4 0.0s
+3SAT_4.26    30 s0 n=  30 | minfill w= 21 c=  23.5 | greedy w= 21.0 c=  23.9 | hyper w= 21.0 c=  23.8 (31s) | E0=+1 #=274 0.3s
+3SAT_4.26    30 s1 n=  30 | minfill w= 20 c=  23.4 | greedy w= 22.0 c=  25.2 | hyper w= 21.0 c=  24.3 (31s) | E0=+1 #=40 0.6s
+3SAT_4.26    30 s2 n=  30 | minfill w= 22 c=  24.5 | greedy w= 21.0 c=  24.7 | hyper w= 21.0 c=  24.8 (30s) | E0=+1 #=80 0.9s
+3SAT_4.26    40 s0 n=  40 | minfill w= 28 c=  30.5 | greedy w= 27.0 c=  31.7 | hyper w= 27.0 c=  30.5 (33s)
+3SAT_4.26    40 s1 n=  40 | minfill w= 28 c=  30.4 | greedy w= 28.0 c=  31.1 | hyper w= 30.0 c=  32.7 (30s)
+3SAT_4.26    40 s2 n=  40 | minfill w= 29 c=  31.4 | greedy w= 29.0 c=  33.2 | hyper w= 29.0 c=  32.7 (30s)
+3SAT_4.26    50 s0 n=  50 | minfill w= 34 c=  36.3 | greedy w= 34.0 c=  37.9 | hyper w= 36.0 c=  39.3 (33s)
+3SAT_4.26    50 s1 n=  50 | minfill w= 33 c=  36.1 | greedy w= 36.0 c=  39.2 | hyper w= 35.0 c=  38.6 (35s)
+3SAT_4.26    50 s2 n=  50 | minfill w= 34 c=  36.9 | greedy w= 37.0 c=  39.7 | hyper w= 34.0 c=  38.0 (31s)
+3SAT_4.26    60 s0 n=  60 | minfill w= 40 c=  42.8 | greedy w= 42.0 c=  47.0 | hyper w= 40.0 c=  44.7 (31s)
+3SAT_4.26    60 s1 n=  60 | minfill w= 43 c=  45.6 | greedy w= 46.0 c=  48.6 | hyper w= 44.0 c=  49.0 (35s)
+3SAT_4.26    60 s2 n=  60 | minfill w= 41 c=  44.2 | greedy w= 44.0 c=  47.9 | hyper w= 46.0 c=  49.3 (31s)
+3SAT_4.26    80 s0 n=  80 | minfill w= 53 c=  55.9 | greedy w= 58.0 c=  63.3 | hyper w= 53.0 c=  57.7 (39s)
+3SAT_4.26    80 s1 n=  80 | minfill w= 52 c=  54.9 | greedy w= 56.0 c=  61.2 | hyper w= 66.0 c=  69.0 (38s)
+3SAT_4.26    80 s2 n=  80 | minfill w= 56 c=  58.8 | greedy w= 58.0 c=  62.7 | hyper w= 67.0 c=  70.5 (42s)
+3SAT_4.26   100 s0 n= 100 | minfill w= 69 c=  71.0 | greedy w= 71.0 c=  76.2 | hyper w= 84.0 c=  87.1 (35s)
+3SAT_4.26   100 s1 n= 100 | minfill w= 68 c=  71.5 | greedy w= 71.0 c=  76.3 | hyper w= 84.0 c=  88.1 (31s)
+3SAT_4.26   100 s2 n= 100 | minfill w= 69 c=  71.3 | greedy w= 74.0 c=  78.4 | hyper w= 79.0 c=  82.2 (46s)
+LABS         10 s0 n=  10 | minfill w=  9 c=  11.0 | greedy w= 10.0 c=  12.8 | hyper w=  9.0 c=  12.5 (30s) | E0=+13 #=40 0.0s
+LABS         15 s0 n=  15 | minfill w= 14 c=  16.0 | greedy w= 15.0 c=  18.7 | hyper w= 15.0 c=  17.3 (31s) | E0=+15 #=8 0.0s
+LABS         20 s0 n=  20 | minfill w= 19 c=  21.0 | greedy w= 20.0 c=  24.1 | hyper w= 20.0 c=  22.3 (32s) | E0=+26 #=8 0.1s
+LABS         25 s0 n=  25 | minfill w= 24 c=  26.0 | greedy w= 25.0 c=  29.4 | hyper w= 25.0 c=  27.0 (36s) | E0=+36 #=8 7.7s
+LABS         30 s0 n=  30 | minfill w= 29 c=  31.0 | greedy w= 30.0 c=  34.6 | hyper w= 30.0 c=  32.8 (38s)
+LABS         35 s0 n=  35 | minfill w= 34 c=  36.0 | greedy w= 35.0 c=  39.9 | hyper w= 35.0 c=  37.1 (49s)
+LABS         40 s0 n=  40 | minfill w= 39 c=  41.0 | greedy w= 40.0 c=  45.3 | hyper w= 40.0 c=  41.8 (67s)

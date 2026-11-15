@@ -1,0 +1,290 @@
+\documentclass{article}
+
+\usepackage{PRIMEarxiv}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{caption}
+\graphicspath{{media/}}
+
+\pagestyle{fancy}
+\thispagestyle{empty}
+\rhead{ \textit{ }}
+\fancyhead[LO]{TENSOR NETWORK BASED HOBO SOLVER}
+
+\newcommand{\Emin}{E_{\min}}
+\newcommand{\N}{N_0}
+
+\title{Tensor Network based HOBO Solver}
+
+\author{
+  Yuichiro Minato \\
+  blueqat Inc. \\
+  Shibuya2-24-12, Shibuya \\
+  Tokyo, Japan\\
+  \texttt{minato@blueqat.com} \\
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Higher-order binary optimization (HOBO) problems are usually reduced to quadratic (QUBO) form before they are handed to a solver. The first version of this paper proposed to keep the higher-order terms as one coefficient tensor, evaluate the cost by tensor contraction (\texttt{einsum}) and search with simulated annealing (SA), but gave no experiments. This revised version turns the same object into a working solver and reports what a tensor-network (TN) formulation can do that a heuristic search does not: certify, count and sample. Writing the cost as a factor graph---one small table per term or clause, one COPY tensor per variable---the contraction of that network in different semirings returns the exact minimum (tropical), the ground-state degeneracy $\N$ (counting tropical), the low-energy spectrum (truncated polynomial), the partition function (log-sum-exp) and exact Boltzmann samples (a top-down pass), all from one contraction tree found by a hyper-optimised path search with slicing. We measure the reach of exact contraction on six problem families (planted 3-regular 3-XORSAT to $n{=}150$, random 3-spin glasses, random 3-SAT, LABS, and two-dimensional plaquette and triangle models to $n{=}144$), counting up to $4.2\times10^{10}$ ground states of the $n{=}144$ lattices in minutes on a CPU (the $n{=}150$ XORSAT instance took 7.3 hours on one GPU). Two findings concern the formulation itself. First, the coefficient tensor and the term-wise factor network contract to identical exact answers, but relaxations built on the term-wise network give tighter lower bounds (by up to an order of magnitude on LABS), which turn SA upper bounds into certified optimality gaps and, on 14 of our 44 larger test instances, into certificates of optimality. Second, using the exact thermodynamics as a yardstick, we find that the well-known loss of SA performance after quadratization cannot be attributed to the equilibrium weight of the ground states alone: at a common temperature the exact ground-state probability of the quadratized model stays within a factor of two of the native value (about three on LABS), while SA's success rate drops by up to two orders of magnitude and in several runs to zero; and, in 10 of our 12 test instances (8 in a first pass, 10 after rerunning the largest four with more effort), SA's landing distribution over degenerate ground states becomes measurably more biased after quadratization. We are explicit about what does not work: dense random instances, LABS and branch-and-bound with the bounds at hand gain nothing from the TN, SVD-compressed contraction estimates but never certifies, and we make no claim that tensor networks outperform SA as optimizers.
+\end{abstract}
+
+\keywords{HOBO \and higher-order binary optimization \and tensor networks \and tropical semiring \and simulated annealing \and quadratization}
+
+\section{Introduction}
+\label{sec:intro}
+
+Combinatorial optimization problems handed to quantum annealers, Ising machines and their classical emulators are usually written as Quadratic Unconstrained Binary Optimization (QUBO)~\cite{Perdomo-Ortiz2012,Glos2022,Andrew2014,Suksmono2019,Suksmono2022}. Many problems, however, are naturally of higher order---satisfiability, factoring, autocorrelation, $k$-body spin glasses---and reducing them to quadratic form costs auxiliary variables and penalty terms~\cite{boros2002pseudoboolean,rosenberg1975reduction,mandal2020compressed}. The first version of this paper~\cite{minato2024hobo} proposed to skip the reduction: keep the Higher-Order Binary Optimization (HOBO) cost as one coefficient tensor, evaluate it by tensor contraction, and search with simulated annealing (SA). A companion implementation, HOBOTAN~\cite{yasuda2024hobotan}, showed small worked examples. Neither contained a systematic experiment.
+
+Since then the question ``is it better to keep higher-order terms than to quadratize?'' has been answered elsewhere, largely in the affirmative: with tensor-train samplers~\cite{salloum2026hubo}, with matrix-product-operator SAT solvers~\cite{zec2026tnsat}, and with higher-order simulated bifurcation~\cite{kanao2023sbhigher}. The related question ``do tensor networks beat annealing as optimizers?'' has also been examined and the answer is, for now, no: on Max-3-SAT simulated annealing was competitive with or better than DMRG~\cite{zec2026tnsat}, and on large quasi-two-dimensional spin glasses tensor-network branch-and-bound was slower and slightly worse than Ising machines~\cite{dziubyna2025limitations}. Those comparisons are not all like for like (different hardware, time budgets and parameter settings, and DMRG did better on some instances in some settings), but a revision of~\cite{minato2024hobo} that simply claimed speed would have to argue against them, and we do not.
+
+This version keeps the proposal of v1 and adds what it lacked: an implementation, experiments, and comparisons; where the measurements do not support the tone of v1, the claims have been changed to match them. It asks a different question: given that the HOBO is written as a tensor network anyway, \emph{what can the network do that a heuristic cannot?} Three things, it turns out, each backed by experiments in Sec.~\ref{sec:experiments}.
+\begin{enumerate}
+\item \textbf{One network, many answers.} Contracting the factor network in the tropical $(\min,+)$ semiring gives the exact minimum~\cite{liu2021tropical}; in the counting-tropical semiring, the minimum and its degeneracy; in a truncated-polynomial semiring, the number of states at each of the lowest energy levels~\cite{liu2023generic}; in the $(\mathrm{logsumexp},+)$ semiring, the partition function; and a top-down pass through the same tree returns a minimizer or exact Boltzmann samples. The contraction path and the slicing are found once by a hyper-optimised search~\cite{gray2021hyper,cotengra} and reused for every semiring.
+\item \textbf{The formulation matters for bounds, not for exact answers.} The coefficient-tensor form of v1 and the term-wise factor form contract to the same exact quantities, but a width-bounded relaxation of the term-wise network (mini-bucket elimination~\cite{dechter2003minibuckets} after a dual-ascent reparameterisation) gives tighter lower bounds than the same relaxation of the coefficient-tensor network (up to an order of magnitude on LABS, none on 3R3X). Combined with an SA upper bound this certifies optimality gaps on instances far beyond exact reach.
+\item \textbf{A yardstick for heuristics.} Because the exact equilibrium quantities are available, the behaviour of SA can be measured against them. Two results follow: the collapse of SA after quadratization is not accompanied by a comparable change of the equilibrium ground-state weight, which points to the dynamics of single-bit moves as the cause, and SA does not sample degenerate ground states uniformly---and less so after quadratization.
+\end{enumerate}
+
+We keep the structure of v1: Secs.~\ref{sec:formulation}--\ref{sec:tensor} restate the HOBO coefficient tensor, Sec.~\ref{sec:contraction} replaces the single \texttt{einsum} of v1 by semiring contraction along an optimised tree, Sec.~\ref{sec:bounds} adds relaxations and moves the SVD discussion of v1 to where it belongs, Sec.~\ref{sec:sa} describes the SA baseline and quadratization, Sec.~\ref{sec:experiments} reports the experiments, and Sec.~\ref{sec:discussion} lists what did not work. The code is available (Sec.~\ref{sec:code}).
+
+\section{Formulation of QUBO and HOBO Problems}
+\label{sec:formulation}
+
+A QUBO cost is a quadratic polynomial in binary variables $x\in\{0,1\}^n$,
+\begin{equation}
+Q(x) = \sum_{i} c_i x_i + \sum_{i<j} q_{ij} x_i x_j ,
+\end{equation}
+into which constraints are folded with penalty weights. A HOBO cost extends this to higher-order monomials,
+\begin{equation}
+E(x) = c_0 + \sum_{S\subseteq[n]} c_S \prod_{i\in S} x_i ,
+\label{eq:hobo}
+\end{equation}
+where $S$ runs over index sets; since $x_i^2=x_i$, repeated indices carry no information and the polynomial is multilinear. The order $k=\max|S|$ of a problem written directly is typically small (3 for 3-SAT and 3-spin glasses, 4 for autocorrelation and plaquette models), while its quadratization introduces one auxiliary bit per eliminated pair of variables~\cite{rosenberg1975reduction,boros2002pseudoboolean}.
+
+\section{QUBO Matrix and HOBO Tensor}
+\label{sec:tensor}
+
+\subsection{The coefficient tensor (v1)}
+In v1 the coefficients of Eq.~\eqref{eq:hobo} were arranged into one order-$k$ tensor $T$ with $c_S$ stored at $T_{s_1\cdots s_k}$, the index list being $S$ padded by repeating its first element ($T_{iii}=c_i$, $T_{iij}=q_{ij}$, $T_{ijk}=h_{ijk}$ for $k=3$), so that
+\begin{equation}
+E(x) = c_0 + \sum_{i,j,k} T_{ijk}\, x_i x_j x_k = c_0 + \texttt{einsum}(\texttt{'ijk,i,j,k->'},\,T,\,x,\,x,\,x).
+\label{eq:einsum}
+\end{equation}
+This is the QUBO matrix generalised by one index per order. We keep it as the \emph{definition} of the cost and as a convenient evaluation for small $n$; it is dense ($n^k$ entries) and it does not know which monomials came from the same term of the original problem.
+
+\subsection{The factor network}
+For contraction we use the sparse form that the problem itself provides (Fig.~\ref{fig:tn}). Every term---a clause of a SAT formula, a $k$-spin coupling, an autocorrelation product---becomes a small table $T_a$ over $\{0,1\}^{|S_a|}$ holding that term's energy for each assignment of its variables, and every variable becomes a hyperedge shared by the tables that mention it (a COPY or $\delta$ tensor). The cost is the sum of the tables,
+\begin{equation}
+E(x) = c_0 + \sum_a T_a(x_{S_a}),
+\label{eq:factor}
+\end{equation}
+which is a tensor network in the $(+,\times)$ sense once each table is exponentiated, and directly a tensor network in the $(\min,+)$ or $(\mathrm{logsumexp},+)$ sense (Sec.~\ref{sec:contraction}).
+
+Three ways of cutting the same function $E$ into tables will be compared. \emph{Bit monomials}: one table per maximal index set of Eq.~\eqref{eq:hobo}, lower-order monomials absorbed into a maximal set containing them---this is what the coefficient tensor of v1 induces. \emph{Spin monomials}: the same after the change of variables $s_i=1-2x_i$. \emph{Natural factors}: the tables of the generating problem (one per clause, one per coupling, with the polynomial expansion never carried out). The three contract to identical exact answers; they differ as starting points for relaxations (Sec.~\ref{sec:exp-basis}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\linewidth]{fig_tn.pdf}
+\caption{The factor network of a HOBO with three terms on four variables. Squares are energy tables, circles are COPY tensors (hyperedges). Contracting the network in a semiring sums the tables over all assignments in that semiring's sense.}
+\label{fig:tn}
+\end{figure}
+
+\section{Solving by Contraction: One Tree, Many Semirings}
+\label{sec:contraction}
+
+\subsection{Semirings}
+Let $\oplus$ and $\otimes$ be the addition and multiplication of a commutative semiring. Contracting the network of Eq.~\eqref{eq:factor} means computing $\bigoplus_{x}\bigotimes_a T_a(x_{S_a})$ with $\otimes$ acting on energies as $+$ (energies add) and $\oplus$ chosen as follows.
+\begin{itemize}
+\item $\oplus=\min$ (tropical): the result is $\Emin=\min_x E(x)$~\cite{liu2021tropical}.
+\item $\oplus$ on pairs $(E,C)$: $(E_1,C_1)\oplus(E_2,C_2)$ keeps the smaller energy and sums the counts of equal energies; $\otimes$ adds energies and multiplies counts. The result is $(\Emin,\N)$ with $\N$ the ground-state degeneracy~\cite{liu2021tropical,liu2023generic}.
+\item $\oplus$ on $(E,\mathbf{c})$ with $\mathbf{c}\in\mathbb{R}^K$: all energies are integer multiples of a unit $u$ ($u=1$ for SAT, $2$ for $\pm1$ spin models, $4$ for LABS), and $\mathbf{c}_j$ is the number of states at energy $E+ju$, $j<K$. $\oplus$ aligns two elements to the smaller $E$ and adds the shifted count vectors; $\otimes$ adds energies and convolves the count vectors; entries beyond $E+(K-1)u$ are discarded. The result is the exact number of states at each of the $K$ lowest levels (the truncated polynomial of~\cite{liu2023generic}).
+\item $\oplus=\mathrm{logsumexp}$ on $-\beta E$: the result is $\log Z(\beta)$ (every reduction subtracts its maximum before exponentiating, so large $\beta$ causes no overflow).
+\end{itemize}
+A top-down pass through the same binary tree recovers a minimizer or draws exact samples. For each pairwise contraction we keep the combined tensor $S$ before its summed indices are reduced; walking the tree from the root, the indices reduced at a node are drawn (or chosen as the argmin) from $S$ restricted to the values already assigned to that node's output indices---for sampling, with probability proportional to $e^{S}$ (on $-\beta E$), which is the exact conditional of those indices given the ones above. Every quantity above is exact for what it defines: the contraction introduces no approximation, and the only truncation is the deliberate cut at $K$ levels of the truncated polynomial.
+
+\subsection{Contraction order, slicing and execution}
+The cost of contracting a network is exponential in the width of the contraction tree (the largest intermediate tensor), so the tree matters more than the hardware. We use \texttt{cotengra}~\cite{gray2021hyper,cotengra}: a hyper-optimiser over greedy and hypergraph-partitioning (KaHyPar) path finders with subtree reconfiguration, minimising the total contraction cost, followed by slicing (fixing a few indices and summing over their values) so that the largest intermediate fits in memory. Slicing preserves the result and splits the work into independent pieces, which parallelise trivially; it can, however, increase the total cost, sometimes severely (Sec.~\ref{sec:discussion}). This is the same kind of tree that NVIDIA's \texttt{cuTensorNet}~\cite{cutensornet} plans; since \texttt{cuTensorNet} and \texttt{cuTENSOR} execute contractions only in $(+,\times)$, we plan the path with \texttt{cotengra} and execute each pairwise contraction ourselves as a batched min-plus (or counting) matrix product, chunked over the summed index so that memory stays at the size of the output. This runs on CPU (NumPy or PyTorch) and on GPU (PyTorch, Sec.~\ref{sec:exp-xorsat}). The tree is chosen by the size of the intermediate tensors, which does not depend on the semiring, so a tree found for one semiring can be reused for the others; the constant factors differ (the counting semiring carries a second array, the truncated polynomial $K$ entries per element, the sampler keeps the unreduced intermediates), but the exponential part of the cost is the same. We stress that this is exactly the v1 idea of ``computing the cost by contraction'' with the reduction operator changed: replacing $\sum$ by $\min$ turns the evaluator into the solver.
+
+For comparison we also report plain variable elimination in the order given by the min-fill heuristic, which is what a bucket-elimination implementation would do without a path optimiser.
+
+\section{Relaxations: Certified Bounds and Approximate Contraction}
+\label{sec:bounds}
+
+\subsection{Lower bounds by cutting hyperedges}
+Exact contraction is out of reach when the width exceeds roughly 33 on a CPU (Sec.~\ref{sec:exp-reach}). Mini-bucket elimination~\cite{dechter2003minibuckets} bounds the width: when eliminating a variable $v$ would create a table over more than $i+1$ variables, the tables that share $v$ are split into groups and $v$ is minimised in each group separately. In tensor-network language, the hyperedge $v$ is cut and each group receives its own copy of $v$; since $\min_v(f+g)\ge\min_v f+\min_v g$, the contraction value is a valid lower bound on $\Emin$, exact once $i$ reaches the width. Before the split we equalise the min-marginals of the groups (moment matching, in the spirit of~\cite{liu2011holder,ahn2019bucket}); this keeps the bound valid and usually tightens it, but not always---downstream combination can undo the gain, and we found small counterexamples---so we compute the bound with and without it. We first run a dual-ascent reparameterisation on the whole network (min-sum diffusion: shift energy between a variable's tables so that their min-marginals over that variable agree; the sum of the tables is unchanged and $\sum_a\min T_a$ is the dual of the local-polytope LP relaxation), then mini-bucket on the reparameterised tables. Every number produced---the dual-ascent value at any iteration, and the mini-bucket value at any $i$-bound with or without moment matching---is a valid lower bound, and the reported LB is the maximum of them.
+
+Together with any feasible configuration---we use the best of an SA run---this yields a certified optimality gap $\mathrm{UB}-u\lceil\mathrm{LB}/u\rceil$, where $u$ is the energy unit of the family (within an instance all energies differ by integer multiples of $u$, $u=2$ for $\pm1$ spin models and $u=1$ for 3-SAT) on instances where exact contraction is impossible.
+
+\subsection{Approximate contraction (the SVD of v1)}
+v1 discussed lightening heavy tensors by singular value decomposition. The precise version of that idea is compressed contraction~\cite{pan2020contracting,gray2024hyperoptimized}: contract in $(+,\times)$ at finite $\beta$ and truncate intermediate bonds to a maximal dimension $\chi$ by SVD. We tested it with \texttt{quimb}'s \texttt{contract\_compressed} on the two-dimensional plaquette model (Sec.~\ref{sec:exp-svd}). It estimates $\log Z$ well at moderate $\chi$, but the estimate is neither an upper nor a lower bound, and SVD truncation has no meaning in the tropical semiring. It is therefore a tool for free-energy estimates, not for certificates, and we do not use it further.
+
+\section{Simulated Annealing and Quadratization}
+\label{sec:sa}
+
+The SA of v1 is retained as the heuristic baseline and made batched: $B$ replicas are annealed at once (PyTorch, CPU or GPU) with single-bit Metropolis moves. The flip cost of bit $i$ needs only the terms containing $i$, $\Delta E_i=(1-2x_i)\sum_{S\ni i}c_S\prod_{j\in S\setminus i}x_j$, so the variables are greedily coloured on the interaction graph and all bits of one colour (which share no term) are updated in parallel, which preserves detailed balance. The schedule is geometric in $\beta$ from $\beta_{\rm hot}=\ln 2/\max_i A_i$ to $\beta_{\rm cold}=\ln 100/\min_S|c_S|$, $A_i=\sum_{S\ni i}|c_S|$, the rule used by D-Wave's \texttt{neal}~\cite{dwaveneal}. A quadratized instance is just another HOBO of order two with more bits, so native and quadratized runs use the same kernel and the same schedule rule.
+
+Quadratization is Rosenberg's substitution~\cite{rosenberg1975reduction}: repeatedly pick the pair $(a,b)$ shared by the most terms of order $\ge 3$, introduce $y=x_ax_b$, replace the pair by $y$ in those terms and add the penalty $M(x_ax_b-2x_ay-2x_by+3y)$, which is zero iff $y=x_ax_b$ and at least $M$ otherwise. With $A$ the sum of $|c_S|$ over the terms that received $y$, any $M>A$ is exact; for integer coefficients $M=A+1$ is the tightest exact integer choice and we also test $M=1.5A$.
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Problem families}
+All generators are in the code repository and produce integer energies (coefficients are integers, so the tie tolerance of $10^{-9}$ in the counting semiring is never exercised). The exact sampler is validated against enumeration (below) and used in Sec.~\ref{sec:exp-fair}; we report no other sampling experiment.
+\emph{Random 3-spin glass}: $n$ spins, $m=2n$ random triples with $J=\pm1$, $E=\sum J_{ijk}s_is_js_k$.
+\emph{Planted 3-regular 3-XORSAT (3R3X)}~\cite{kowalsky2022xorsat}: every variable in exactly three of $n$ parity clauses, right-hand sides from a planted assignment, so $\Emin=-n$ and $\N=2^{\,n-\mathrm{rank}_{\mathrm{GF}(2)}A}$ are known independently of the solver. This family is solvable in polynomial time by Gaussian elimination over GF(2); it is a standard benchmark precisely because physics-inspired heuristics fail on it.
+\emph{Random 3-SAT} at clause density $4.26$, $E$ the number of violated clauses.
+\emph{LABS} (low-autocorrelation binary sequences), $E=\sum_k C_k^2$, a 4-body model with known optima~\cite{packebusch2016labs}.
+\emph{2D plaquette} ($4$-spin terms on the faces of an $L\times L$ torus, random signs) and \emph{2D triangle} ($3$-spin terms on the up-triangles of a periodic triangular lattice).
+Before any experiment, every routine was checked against enumeration on instances with $n\le 22$ of all six families: minimum, degeneracy, level counts, $\log Z$, the recovered minimizer and the mean energy of the exact sampler agree with brute force, with and without slicing; an independent audit (a fresh enumeration script written without reference to our code) confirmed minimum, degeneracy, level counts, $\log Z$, minimizer and all one-bit sampler marginals within four standard errors on three further instances. Beyond that size the only independent checks are the planted energy and the GF(2) degeneracy of 3R3X (Sec.~\ref{sec:exp-xorsat}); for the other families the larger instances rest on the correctness of the contraction, which is exact by construction.
+
+\subsection{Formulation: exact answers agree, bounds do not}
+\label{sec:exp-basis}
+Table~\ref{tab:basis} contracts the same five functions from the three table decompositions of Sec.~\ref{sec:tensor}. The exact quantities coincide: $\Emin$ and $\N$ agree exactly and $\log Z(1)$ to $4\times10^{-15}$ across the three decompositions on all five instances, and all agree with enumeration. The lower bounds do not: on LABS the trivial bound (sum of table minima) is $-5458$ from the bit-monomial tables and $-374$ from the natural factors, and at $i=8$ still $-299.7$ versus $-38$ against $\Emin=+10$; on 3-SAT the natural (clause) tables give the bound $0$ (one unit below $\Emin=1$) before any elimination, where the bit-monomial tables start at $-49$. The reason is that expanding a clause or a spin coupling into $\{0,1\}$ monomials scatters one term into many monomials of alternating sign, which land in different tables, and the cancellations then have to be recovered across tables by the relaxation. \emph{The coefficient tensor of v1 remains the right object to define the cost; the network to contract should be built from the problem's own terms.}
+
+\begin{table}[t]
+\centering\small
+\caption{Lower bounds (dual ascent + mini-bucket at $i$-bound $4/8/12$, and the trivial sum of table minima) from three decompositions of the same cost. Exact contraction gives the same $\Emin$ for all three.}
+\label{tab:basis}
+\adjustbox{max width=\linewidth}{\input{tables/tab_basis.tex}}
+\end{table}
+
+\subsection{Reach of exact contraction}
+\label{sec:exp-reach}
+Table~\ref{tab:reach} and Fig.~\ref{fig:reach} give, for every family and size, the width of the min-fill elimination order and of the \texttt{cotengra} tree (30\,s of hyper-optimisation, three seeds), the best $\log_2$ contraction cost, and---where that cost is below $2^{30}$---the time of the exact counting contraction on a CPU. The path optimiser lowers the width on structured instances, by up to 26 at the largest sizes (3R3X $n{=}200$: 72--79 to 52--53; triangle $L{=}10$: 29 to 21; only 1--3 at $n\le40$), while on random 3-SAT it does not help and the 30\,s search is sometimes worse than min-fill; the cost column therefore reports the best of min-fill and the two \texttt{cotengra} searches. LABS has width $N-1$ under min-fill and $N$ in the \texttt{cotengra} trees (all pairs interact through the 4-body terms), so it gains nothing from a path search; its optima are known to $N=66$ by dedicated branch-and-bound~\cite{packebusch2016labs}, and we include it only as a negative example.
+
+With a CPU and a few minutes, exact contraction reaches $n=100$ for 3R3X (26--190\,s, Table~\ref{tab:xorsat}), $L=12$ ($n=144$) for the two lattice models (Table~\ref{tab:lattice}), $n=50$ for random 3-spin at $m=2n$ (1.6--7.9\,s) and $n=30$ for random 3-SAT (below 1\,s; $n=40$ has cost $2^{30}$--$2^{31}$ and was not run). Table~\ref{tab:lattice} shows the $L=12$ lattices in detail: two to four minutes per instance on eight CPU threads (plus 180\,s of path search) for the exact minimum \emph{and} its degeneracy, which ranges from $6.9\times10^3$ to $4.2\times10^{10}$. On the same instances SA (1024 replicas, 2000 sweeps) finds the same minimum in every case but reaches it with $0.4$--$3.2\%$ of the replicas and, of course, cannot certify it or count it.
+
+\begin{table}[t]
+\centering\small
+\caption{Width of the min-fill order and of the \texttt{cotengra} tree, best $\log_2$ contraction cost (ranges over three seeds; a single value means all seeds agree; LABS has one instance per $N$), and, where run, CPU time of the exact counting contraction and the degeneracy $\N$. ``terms'' counts the monomials of Eq.~\eqref{eq:hobo} in the $\{0,1\}$ basis, e.g.\ about $5n$ for the $n$ parity clauses of 3R3X, each of which expands into seven monomials before merging.}
+\label{tab:reach}
+\adjustbox{max width=\linewidth}{\input{tables/tab_reach.tex}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_reach.pdf}
+\caption{Left: best $\log_2$ contraction cost against $n$ for the six families; the dashed lines mark what a CPU contracts in minutes and a single GPU in hours. Right: reduction of the contraction width by the hyper-optimised path search relative to min-fill elimination.}
+\label{fig:reach}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\caption{Exact minimum and degeneracy of $L=12$ lattice models (natural factors, \texttt{cotengra} tree with 180\,s search, min-plus execution in PyTorch on 8 CPU threads; TN time excludes the search) against SA with 1024 replicas and 2000 sweeps.}
+\label{tab:lattice}
+\adjustbox{max width=\linewidth}{\input{tables/tab_lattice.tex}}
+\end{table}
+
+\subsection{Planted 3-XORSAT: where SA stalls}
+\label{sec:exp-xorsat}
+Table~\ref{tab:xorsat} compares exact contraction with SA on planted 3R3X for $n=60$ to $150$. The TN returns $\Emin=-n$ and a degeneracy that equals $2^{n-\mathrm{rank}A}$ in every instance---an independent algebraic check of the counting semiring. SA with $10^4$ sweeps reaches the planted energy with $1.8$--$3\%$ of the replicas at $n=60$, $0.3$--$0.5\%$ at $n=80$, $0$--$0.3\%$ at $n=100$, and in one $n=100$ instance not at all (best $-98$). The $n=150$ instance was contracted on one V100 GPU: 32{,}768 slices, $7.3$\,h (excluding 300\,s of path search), peak memory $5.5$\,GB, giving $\Emin=-150$ and $\N=4$, both correct, while SA on the same GPU stops at $-146$. We emphasise again that Gaussian elimination solves 3R3X in polynomial time; the point of the table is that the generic contraction, which uses no algebraic structure, reproduces the algebraic answer including the degeneracy, on a family where the heuristic of v1 does not.
+
+\begin{table}[t]
+\centering\small
+\caption{Planted 3-regular 3-XORSAT. The TN degeneracy is checked against $2^{n-\mathrm{rank}_{\mathrm{GF}(2)}A}$. SA: 1024 replicas; $P(E_0)$ is the fraction of replicas that reach the planted energy. The $n=150$ instance ran on one V100 (\texttt{cotengra} search 300\,s, float32 energies, float64 counts). $^\dagger$width after slicing (the largest intermediate of one slice), which is why the $n=150$ value (26) is below the unsliced widths of Table~\ref{tab:reach}.}
+\label{tab:xorsat}
+\adjustbox{max width=\linewidth}{\input{tables/tab_xorsat.tex}}
+\end{table}
+
+\subsection{Anatomy of the quadratization penalty}
+\label{sec:exp-quad}
+It is known that SA degrades after quadratization~\cite{zec2026tnsat,salloum2026hubo}. The exact thermodynamics lets us ask \emph{why}. For each instance we quadratize with $M=A+1$ and $M=1.5A$ and compute, at one common inverse temperature $\beta_{\rm cold}$ (that of the native schedule), the exact equilibrium probability of being in a ground state, $P_0(\beta)=\N e^{-\beta\Emin}/Z(\beta)$, for the native and both quadratized models (the auxiliary bits are summed over), and we run SA with 1000 sweeps on all three (Table~\ref{tab:quad}, Fig.~\ref{fig:quad}).
+
+The equilibrium probabilities move by a bounded amount: on 3-spin, $P_0$ for $M=1.5A$ equals the native value to within $3\times10^{-4}$ and for $M=A+1$ is lower by at most a factor $1.25$; on 3-SAT the factors are at most $1.1$ ($M=A+1$) and $1.7$ ($M=1.5A$); on LABS $N=13$ they are $3.2$ ($M=A+1$) and $1.01$ ($M=1.5A$). At twice the inverse temperature all three models have $P_0\ge0.95$ on every 3-spin and 3-SAT instance. The degeneracy $\N$ is unchanged by construction. Yet SA's success rate falls from $0.09$--$1.0$ to at most $0.22$ and in six of the 24 quadratized 3-spin runs to zero, and from $0.68$--$1.0$ to at most $0.61$ and typically below $0.03$ for $n\ge24$ on 3-SAT, with the ratio growing with $n$, and from $0.73$ to $0$ on LABS $N=13$ where $P_0$ for $M=1.5A$ is within $1\%$ of the native value. The weight that equilibrium assigns to the ground states changes by a small factor; what changes, we conjecture, is the reachability under single-bit moves, because the auxiliary bit and its two parents must flip in a coordinated way to move between valid configurations. The comparison is suggestive rather than conclusive, and it controls some things but not everything: $P_0$ is evaluated at the same $\beta$ for all three models, each bit receives the same number of update attempts (one per sweep; the quadratized run therefore does more total work because it has more bits), but the geometric SA schedule is derived from each model's own coefficients, the auxiliary bits are annealed at the same temperature as the others, and $P_0$ summarises the spectrum at one temperature. The level counts of the quadratized models include configurations whose auxiliary bits are inconsistent with their parents; with $M=A+1$ on 3-SAT such a violation can raise the energy by as little as one unit net, which is where the extra low-lying states of Table~\ref{tab:quad} come from. These are the states a sampler of the quadratized model actually visits, so they belong in the comparison. The level counts of Table~\ref{tab:quad} (the number of states with $E\le E_0+2$, from the truncated-polynomial contraction; that is one level above the minimum for the spin models, two for 3-SAT, the ground level only for LABS) also change by less than a factor of six under quadratization, while the SA rate drops by factors from 1.6 to about 340, and to zero in nine of the 46 quadratized runs. A sampler-only method cannot make this comparison at all; the TN provides the equilibrium reference at a cost that does not depend on the sampling effort. The quadratized networks are also wider (Table~\ref{tab:quad}), so quadratization hurts exact contraction as well. This separation between equilibrium weight and dynamics is not available to a method that only samples. We note that the SA column is a ``best-so-far'' rate---the fraction of replicas whose lowest-energy configuration during the anneal, restricted to the original bits for the quadratized models, is a ground state of the original cost---and $P_0$ an instantaneous equilibrium probability; the two columns are compared only across variants, never with each other.
+
+\begin{table}[t]
+\centering\small
+\caption{Native versus quadratized HOBO: number of auxiliary bits, contraction width, degeneracy, number of states with $E\le E_0+2$, exact equilibrium ground-state probability at the common $\beta_{\rm cold}$ of the native schedule and at twice that value, and SA success rate (1024 replicas, 1000 sweeps).}
+\label{tab:quad}
+\adjustbox{max width=\linewidth}{\input{tables/tab_quad.tex}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_quad.pdf}
+\caption{Quadratization leaves the exact equilibrium ground-state probability nearly unchanged (left) while SA's success rate collapses (right). Instances are grouped by family (3-spin, 3-SAT, LABS) and labelled by $n$.}
+\label{fig:quad}
+\end{figure}
+
+\subsection{Does SA sample degenerate ground states fairly?}
+\label{sec:exp-fair}
+When $\N>1$, a user of SA typically assumes that the ground states are found with comparable probability. This can only be checked if all ground states are known. We select random 3-spin instances with $4\le\N\le21$, count $\N$ by contraction, enumerate the ground states by exact Boltzmann sampling at large $\beta$ until $\N$ distinct ones have appeared (completeness is guaranteed by the count), and record which ground state each successful SA replica lands in ($8\times2048$ replicas; native 1000 sweeps, quadratized $M=A+1$ 3000 sweeps). Table~\ref{tab:fair} and Fig.~\ref{fig:fair} summarise twelve instances; the four $n=40$ instances were then rerun with about thirteen times the quadratized effort ($32\times4096$ replicas, 5000 sweeps; rows marked $^\dagger$). In these instances native SA reaches every ground state but not uniformly: the ratio of the most to the least frequent landing is $1.2$--$5.3$ and a $\chi^2$ test rejects uniformity in all 12 instances (first pass: $p<10^{-3}$ in 11 instances and $p=0.026$ in one, Table~\ref{tab:fair}; native hits are $2450$--$16070$ per instance, so every expected cell count exceeds 100 and the $\chi^2$ approximation is safe; replicas are independent chains driven by one generator per batch). Quadratized SA reaches ground states 5 to 120 times less often, and in the first-pass $n=40$ runs its cell counts are too small for a $\chi^2$ test; to compare the \emph{shape} of the two distributions at equal sample size we subsample the native landings, without replacement, to the quadratized hit count (1000 draws) and ask how often the subsample is at least as concentrated, measured by the normalised entropy $H/\log\N$, as the quadratized distribution. In the first pass quadratization makes the landing distribution significantly more biased (5\% level) in 8 of 12 instances: all four at $n=24$, three of four at $n=32$, and one of four at $n=40$, where the quadratized runs had only 44--82 hits. With thirteen times the effort the quadratized $n=40$ runs reach 653--1248 hits and three of the four become significant (max/min ratios 8--20 against 1.2--3.5 for the native reruns); the remaining one has $\N=4$ and both samplers are close to uniform on it. Taking the rerun values for $n=40$, 10 of the 12 instances are significant, and the same 10 survive a Benjamini--Hochberg correction at 5\% over the 12 tests; the two exceptions are the instances with $\N=21$ (not rerun) and $\N=4$. In these instances quadratization therefore costs not only success probability but also solution diversity; for the ten significant instances the entropy reduction in Table~\ref{tab:fair} is $0.02$--$0.16$ in $H/\log\N$.
+
+\begin{table}[t]
+\centering\small
+\caption{SA landing distribution over the $\N$ exact ground states of random 3-spin instances ($^\dagger$: $n=40$ rerun with $32\times4096$ quadratized replicas and 5000 sweeps, about 13 times the first-pass effort). ``max/min'' is the ratio of the most to the least frequent ground state; $H/\log\N$ the normalised entropy; $\chi^2$ $p$ the $p$-value of the uniformity test on the native landings; the last two columns give the native entropy subsampled to the quadratized hit count and the fraction of subsamples at least as biased as the quadratized run ($p<0.05$: quadratized is significantly more biased).}
+\label{tab:fair}
+\adjustbox{max width=\linewidth}{\input{tables/tab_fair.tex}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_fair.pdf}
+\caption{Left, centre: SA landing frequencies over the exact ground states of two instances (dashed line: uniform). Right: normalised entropy of the quadratized landing distribution against that of the native distribution subsampled to the same number of hits (bars: 5\% quantile; squares: the $n=40$ reruns with thirteen times the quadratized effort); red points lie significantly below the diagonal.}
+\label{fig:fair}
+\end{figure}
+
+\subsection{Certified gaps beyond exact reach}
+\label{sec:exp-gap}
+Table~\ref{tab:gap} and Fig.~\ref{fig:gap} pair an SA upper bound (1024 replicas, 2000 sweeps) with the lower bound of Sec.~\ref{sec:bounds} at $i$-bounds up to 20 on instances up to $n=576$. With natural factors, 14 of 44 instances are certified optimal without a full contraction (in five of them the $i=20$ mini-bucket happened to need no split and was therefore exact): all 3R3X with $n\le60$ (there the sum of clause minima, $-n$, is already the planted optimum, so the certificate only requires SA to reach it), satisfiable 3-SAT instances up to $n=150$ (the clause tables give $\mathrm{LB}=0$ directly), 3-spin at $n=40$, and both lattices at $L=8$. With the coefficient-tensor tables only 6 of the same 30 instances are certified (12 with natural factors), and the gap is never smaller and larger in 21 of the 30. For the $L=12$ lattices the remaining gaps of 4--8 were resolved by the exact contraction of Table~\ref{tab:lattice}: the SA upper bound was optimal and the bound was loose. For dense random instances (3-spin $n\ge60$, 3R3X $n\ge100$) the dual ascent does not move from the trivial bound (``dual'' column of Table~\ref{tab:gap}; 3-spin $n=100$: trivial and dual $-200$, mini-bucket at $i=20$ $-192$, SA $-150$) and mini-bucket closes only part of the gap; on 3-spin the relaxation is then not informative, while on 3R3X $n\ge100$ it leaves gaps of 2--8 that SA, not the bound, is responsible for (the bound $-n$ is tight).
+
+\begin{table}[t]
+\centering\small
+\caption{Certified optimality gaps $\mathrm{UB}-u\lceil\mathrm{LB}/u\rceil$ ($u=2$ for the spin and parity models, $u=1$ for 3-SAT) from an SA upper bound and lower bounds with natural-factor tables (``dual'': dual ascent alone; ``LB'': best of dual ascent and mini-bucket at $i\le20$) and with coefficient-tensor tables. $^*$: certified optimal.}
+\label{tab:gap}
+\adjustbox{max width=\linewidth}{\input{tables/tab_gap.tex}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_gap.pdf}
+\caption{Certified gap per instance from the two table decompositions (zero height = certified optimal; symlog scale).}
+\label{fig:gap}
+\end{figure}
+
+\subsection{Compressed contraction}
+\label{sec:exp-svd}
+On the plaquette model at $L=6$, \texttt{contract\_compressed} with $\chi=64$ reproduces $\log Z$ to relative error $10^{-6}$ or better at $\beta=0.3,1,3$; $\chi=16$ to $3\times10^{-4}$; $\chi=4$ overestimates $\log Z$ by $5.5\%$ at $\beta=3$. The error has either sign ($\chi=4$ underestimates at $\beta=0.3$ and $1$), so the estimate is accurate but bounds nothing, and each contraction took 8--22\,s against 5\,ms for the exact contraction at this size. At $L=8$ our first attempt ran out of memory because the hyperedge resolution produced an unfavourable path; we did not pursue it.
+
+\section{Discussion and Limitations}
+\label{sec:discussion}
+
+\paragraph{Where the tensor network adds nothing.} Exact contraction is exponential in the contraction width. For random 3-SAT and random 3-spin the width grows linearly in $n$ with a slope that no path optimiser changes (Fig.~\ref{fig:reach}), so the exact methods stop at $n\approx35$--$50$, and on the same families the relaxation of Sec.~\ref{sec:bounds} is not informative beyond $n\approx40$. LABS has width $N-1$ by construction. On these families SA remains the tool, and our results say nothing against it. The $n=150$ 3R3X instance shows the boundary from the other side: reachable on a GPU, but at 7\,h it is not a practical solver, and an attempt at the $L=16$ lattices ($n=256$) was abandoned: the unsliced trees of Table~\ref{tab:reach} cost $2^{43}$--$2^{46}$, but slicing them down to intermediates of $2^{26}$ entries for the GPU inflated the total to $2^{57}$ ($2^{26}\approx67$ million slices of cost $2^{31}$ each), and a 300\,s search found nothing better.
+
+\paragraph{Branch and bound.} A natural next step is to use the slices as subproblems and prune them with the lower bound before contracting. We implemented this and it pruned nothing on the $L=12$ lattices: a slice can be dropped only if its own bound exceeds the incumbent minus one energy unit; the unconditioned bound is 4--8 below the optimum on these instances (Table~\ref{tab:gap}), conditioning on the sliced variables did not close that gap for a single slice (for this test the trees were sliced into 16 to 1024 pieces per instance; every piece had to be contracted), and for instances as degenerate as these almost every slice contains a ground state anyway. Branch-and-bound tensor networks that do work~\cite{wang2026bbtn,smierzchalski2025spinglasspeps,rams2021approximate} rely on much tighter, problem-specific bounds; with the generic mini-bucket bound the method has no value.
+
+\paragraph{Relation to prior work.} Tropical and generic-semiring contraction are due to~\cite{liu2021tropical,liu2023generic,gao2025guide}, counting with tensor networks to~\cite{kourtis2019fast}, hyper-optimised paths to~\cite{gray2021hyper}, compressed contraction to~\cite{pan2020contracting,gray2024hyperoptimized}, mini-buckets to~\cite{dechter2003minibuckets}. What is new here is modest and specific: the application of all of them to one HOBO object with higher-order terms of any order; the observation that the term-wise network, not the coefficient tensor, is the right input for relaxations; and the use of the exact equilibrium as a reference for SA, which yields the equilibrium-versus-dynamics diagnosis of quadratization and the fairness measurement.
+
+\paragraph{Quadratization as a tensor decomposition.} In the $(+,\times)$ picture a $k$-body Boltzmann factor $e^{-\beta c\prod_{i\in S}x_i}=1+(e^{-\beta c}-1)\prod_{i\in S}x_i$ has CP rank two, and in the tropical picture a negative monomial $c\prod x_i=\min_y c\,y(\sum_{i\in S}x_i-k+1)$ is a rank-one tropical factorisation with one auxiliary index; an auxiliary bit of Rosenberg's reduction is a bond index of dimension two. We only note the correspondence; whether tropical rank bounds the number of auxiliaries needed by any quadratization is a question we leave open.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+The coefficient tensor of v1 is a definition; the solver is the contraction of the term-wise factor network, and the reduction operator of that contraction is a free parameter. Choosing it as $\min$ solves the problem exactly, as a counting semiring counts the solutions, as a truncated polynomial gives the low-energy spectrum, as $\mathrm{logsumexp}$ gives the free energy, and a top-down pass samples---all from one contraction tree, on lattice instances with $n=144$ variables and up to $4.2\times10^{10}$ ground states within minutes on a CPU, and on one $n=150$ XORSAT instance in 7.3 hours on a GPU. Where exact contraction is out of reach, a width-bounded contraction of the same network gives certified optimality gaps---and on 14 of 44 instances a certificate of optimality---provided the network is built from the problem's own terms; on dense random instances the gaps stay wide. And where neither is possible, the exact quantities on smaller instances serve as a yardstick for the heuristic: on the instances tested they show that quadratization changes the equilibrium weight of the ground states by at most a small factor while SA's success collapses, which points to the single-bit dynamics as the cause, and that SA's coverage of degenerate optima is uneven and, in 10 of 12 instances, worsens after quadratization. We make no claim that tensor networks are faster than annealing; on dense random instances beyond a few dozen variables they are not useful, neither as solvers nor as bound providers. What they offer, where the width allows, is answers of a different kind.
+
+\section*{Code Availability}
+\label{sec:code}
+The solver (\texttt{hobo.py}: coefficient tensor, quadratization, tropical elimination; \texttt{tn.py}: factor network, semirings, contraction along \texttt{cotengra} trees, exact sampling; \texttt{tn\_torch.py}: min-plus execution on CPU/GPU; \texttt{bounds.py}: dual ascent and mini-bucket; \texttt{sa.py}: batched SA; \texttt{instances.py}: generators), the experiment scripts, the raw results from which every table and figure of this paper is generated, and self-tests against brute-force enumeration are available at \url{https://github.com/minatoyuichiro/tn-hobo-solver} under the MIT license.
+
+\section*{Acknowledgments}
+We thank Chia-Wei Hsing for his contributions to the tensor network section of v1 and Shoya Yasuda for his support in providing fundamental knowledge and technical assistance.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}

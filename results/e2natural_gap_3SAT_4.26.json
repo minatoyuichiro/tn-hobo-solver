@@ -1,0 +1,314 @@
+[
+ {
+  "family": "3SAT_4.26",
+  "size": 40,
+  "seed": 0,
+  "n": 40,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 0.0,
+  "ub_sec": 14.760143756866455,
+  "ub_hits": 1024,
+  "lb_dual": 0.0,
+  "dual_sec": 0.0044558108784258366,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.009858867153525352
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.01599959470331669
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.08253180654719472
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 1.5112643539905548
+   }
+  },
+  "lb": 0.0,
+  "certified": true,
+  "gap": 0.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 40,
+  "seed": 1,
+  "n": 40,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 1.0,
+  "ub_sec": 22.304914712905884,
+  "ub_hits": 1024,
+  "lb_dual": 0.0,
+  "dual_sec": 0.004613055847585201,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.00923797395080328
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.02128628408536315
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.14785516262054443
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 2.5315217906609178
+   }
+  },
+  "lb": 0.0,
+  "certified": false,
+  "gap": 1.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 60,
+  "seed": 0,
+  "n": 60,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 1.0,
+  "ub_sec": 49.05430054664612,
+  "ub_hits": 1024,
+  "lb_dual": 0.0,
+  "dual_sec": 0.007541493978351355,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.019038000144064426
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.030602434184402227
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.2833190942183137
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 7.186889948323369
+   }
+  },
+  "lb": 0.0,
+  "certified": false,
+  "gap": 1.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 60,
+  "seed": 1,
+  "n": 60,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 1.0,
+  "ub_sec": 26.247277975082397,
+  "ub_hits": 953,
+  "lb_dual": 0.0,
+  "dual_sec": 0.009029482956975698,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.02294171927496791
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.037982848938554525
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.360318873077631
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 12.001150870230049
+   }
+  },
+  "lb": 0.0,
+  "certified": false,
+  "gap": 1.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 100,
+  "seed": 0,
+  "n": 100,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 0.0,
+  "ub_sec": 119.20829105377197,
+  "ub_hits": 1024,
+  "lb_dual": 0.0,
+  "dual_sec": 0.013075246009975672,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.03774368669837713
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.06810832675546408
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 1.5237638032995164
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 44.54813981661573
+   }
+  },
+  "lb": 0.0,
+  "certified": true,
+  "gap": 0.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 100,
+  "seed": 1,
+  "n": 100,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 0.0,
+  "ub_sec": 140.61020374298096,
+  "ub_hits": 56,
+  "lb_dual": 0.0,
+  "dual_sec": 0.01627718796953559,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.04398239590227604
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.0967143177986145
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 2.21860789693892
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 41.067789072170854
+   }
+  },
+  "lb": 0.0,
+  "certified": true,
+  "gap": 0.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 150,
+  "seed": 0,
+  "n": 150,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 0.0,
+  "ub_sec": 249.80930995941162,
+  "ub_hits": 197,
+  "lb_dual": 0.0,
+  "dual_sec": 0.01679758122190833,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.08005868643522263
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.1421049195341766
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 2.477702686563134
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 64.6927426182665
+   }
+  },
+  "lb": 0.0,
+  "certified": true,
+  "gap": 0.0
+ },
+ {
+  "family": "3SAT_4.26",
+  "size": 150,
+  "seed": 1,
+  "n": 150,
+  "unit": 1,
+  "basis": "natural",
+  "ub": 1.0,
+  "ub_sec": 287.38545274734497,
+  "ub_hits": 323,
+  "lb_dual": 0.0,
+  "dual_sec": 0.03690798720344901,
+  "dual_iters": 1,
+  "mbe": {
+   "8": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.09351243823766708
+   },
+   "12": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 0.1393166114576161
+   },
+   "16": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 3.6890686969272792
+   },
+   "20": {
+    "lb": 0.0,
+    "exact": false,
+    "sec": 86.08396935742348
+   }
+  },
+  "lb": 0.0,
+  "certified": false,
+  "gap": 1.0
+ }
+]

@@ -1,0 +1,4 @@
+plaq2d L=12 s0: width 25 log2cost 32.8 slices 2 | E0 -136 #=2.013e+08 (202s) | SA best -136 P=0.009 (110s)
+plaq2d L=12 s1: width 26 log2cost 32.8 slices 1 | E0 -130 #=4.228e+10 (219s) | SA best -130 P=0.032 (94s)
+tri2d L=12 s0: width 25 log2cost 32.5 slices 2 | E0 -140 #=6912 (128s) | SA best -140 P=0.004 (32s)
+tri2d L=12 s1: width 26 log2cost 32.4 slices 1 | E0 -140 #=1.382e+04 (144s) | SA best -140 P=0.008 (46s)

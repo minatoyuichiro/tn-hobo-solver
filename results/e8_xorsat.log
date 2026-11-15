@@ -1,0 +1,4 @@
+3R3X 150 s0: tree width 26 log2cost 47.1 slices 32768 (305s)
+3R3X 150 s0: E0 -150 #=4 (26384s, peak 5.5GB) | planted -150 GF2 4 | SA1e3 -146 P=0.000 | SA1e4 -146 P=0.000 (46s)
+Terminated
+sat after s0 at Fri Sep 25 21:13:19 UTC 2026
